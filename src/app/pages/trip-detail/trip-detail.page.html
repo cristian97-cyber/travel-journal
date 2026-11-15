@@ -65,7 +65,16 @@
                       @if (stop.time) { <p class="stop__time">{{ stop.time }}</p> }
                       <h3>{{ stop.title }}</h3>
                     </div>
-                    @if (stop.duration) { <span class="stop__duration">{{ stop.duration }}</span> }
+                    @if (stop.duration || stop.toBeBooked) {
+                      <div class="stop__tags">
+                        @if (stop.toBeBooked) {
+                          <span class="stop__booking-tag">Da prenotare</span>
+                        }
+                        @if (stop.duration) {
+                          <span class="stop__duration">{{ stop.duration }}</span>
+                        }
+                      </div>
+                    }
                   </div>
                   @if (stop.location) { <p class="stop__location">{{ stop.location }}</p> }
                   @if (stop.address && stop.address !== stop.location) { <p class="stop__address">{{ stop.address }}</p> }
@@ -96,4 +105,3 @@
     <a mat-flat-button routerLink="/">Torna ai viaggi</a>
   </div>
 }
-

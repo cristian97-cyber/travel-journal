@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.app-header {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  height: 72px;
+  padding: 0 max(var(--space-5), calc((100vw - var(--content-width)) / 2));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  background: color-mix(in srgb, var(--color-background) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.brand__logo {
+  display: block;
+  width: auto;
+  height: 50px;
+}
+
+.local-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  font-size: 0.78rem;
+}
+
+.local-badge span {
+  color: var(--color-success);
+  font-size: 0.55rem;
+}
+
+@media (max-width: 620px) {
+  .app-header {
+    height: 64px;
+  }
+
+  .brand__logo {
+    height: 44px;
+  }
+
+  .local-badge {
+    display: none;
+  }
+}

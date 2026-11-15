@@ -1,0 +1,346 @@
+:host {
+  display: block;
+  padding-bottom: var(--space-16);
+}
+
+.breadcrumb {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding-top: var(--space-7);
+  color: var(--color-text-subtle);
+  font-size: 0.88rem;
+}
+
+.breadcrumb a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.trip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--space-8);
+  padding: var(--space-8) 0 var(--space-9);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.eyebrow,
+.day-list__label {
+  margin: 0;
+  color: var(--color-primary);
+  font: var(--font-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.trip-header h1 {
+  margin: var(--space-2) 0 var(--space-3);
+  color: var(--color-ink);
+  font: var(--font-title-xl);
+  letter-spacing: -0.035em;
+}
+
+.trip-header__meta {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.trip-header__description {
+  max-width: 720px;
+  margin: var(--space-5) 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.trip-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: var(--space-10);
+  padding-top: var(--space-9);
+}
+
+.day-list {
+  position: sticky;
+  top: 92px;
+  align-self: start;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.day-list__label {
+  padding: 0 var(--space-3) var(--space-3);
+  color: var(--color-text-subtle);
+}
+
+.day-button {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: left;
+  color: var(--color-text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.day-button:hover {
+  background: var(--color-surface-muted);
+}
+
+.day-button--active {
+  border-color: var(--color-primary-border);
+  color: var(--color-primary-strong);
+  background: var(--color-primary-soft);
+}
+
+.day-button__date {
+  flex: 0 0 48px;
+  display: grid;
+  justify-items: center;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.day-button__date strong {
+  margin: 3px 0;
+  font-size: 1.3rem;
+}
+
+.day-button__date small {
+  font-size: 0.67rem;
+}
+
+.day-button__copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.day-button__copy small {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-heading {
+  padding-bottom: var(--space-7);
+}
+
+.day-heading h2 {
+  margin: var(--space-2) 0;
+  color: var(--color-ink);
+  font: var(--font-title-lg);
+}
+
+.day-heading__date {
+  margin: 0;
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}
+
+.day-heading__summary {
+  max-width: 740px;
+  margin: var(--space-5) 0 0;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stop {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.stop__rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.stop__rail::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 36px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--color-border-strong);
+}
+
+.stop--last .stop__rail::after {
+  display: none;
+}
+
+.stop__rail span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--color-primary);
+  font: var(--font-label);
+}
+
+.stop__card {
+  margin-bottom: var(--space-5);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.stop__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.stop__heading h3 {
+  margin: 2px 0 0;
+  color: var(--color-ink);
+  font: var(--font-title-sm);
+}
+
+.stop__time {
+  margin: 0;
+  color: var(--color-primary);
+  font: var(--font-label);
+}
+
+.stop__duration {
+  align-self: start;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  font-size: 0.78rem;
+}
+
+.stop__location {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.stop__address {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-subtle);
+  font-size: 0.9rem;
+}
+
+.stop__description {
+  margin: var(--space-4) 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+.map-link {
+  display: inline-block;
+  margin-top: var(--space-5);
+  color: var(--color-primary);
+  font: var(--font-label);
+  text-decoration: none;
+}
+
+.page-status,
+.empty-day {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.page-status--missing h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font: var(--font-title-lg);
+}
+
+.page-status--missing p {
+  margin: 0 0 var(--space-3);
+}
+
+.missing-mark {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  font: var(--font-title-sm);
+}
+
+.empty-day {
+  min-height: 240px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 820px) {
+  .trip-header {
+    flex-direction: column;
+  }
+
+  .trip-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  .day-list {
+    position: static;
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4) var(--space-2);
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .day-list__label {
+    display: none;
+  }
+
+  .day-button {
+    flex: 0 0 210px;
+  }
+}
+
+@media (max-width: 560px) {
+  .trip-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .stop {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stop__rail span {
+    width: 30px;
+    height: 30px;
+  }
+
+  .stop__card {
+    padding: var(--space-5);
+  }
+}
+

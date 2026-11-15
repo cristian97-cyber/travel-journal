@@ -1,0 +1,108 @@
+@use '@angular/material' as mat;
+
+:root {
+  @include mat.theme((
+    color: (
+      primary: mat.$green-palette,
+      tertiary: mat.$orange-palette,
+    ),
+    typography: (plain-family: (Inter, system-ui, sans-serif)),
+    density: 0,
+  ));
+
+  --color-background: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f0eb;
+  --color-ink: #17221f;
+  --color-text: #2f3b37;
+  --color-text-muted: #66716d;
+  --color-text-subtle: #838c88;
+  --color-primary: #315f54;
+  --color-primary-strong: #234a41;
+  --color-primary-soft: #e5efeb;
+  --color-primary-border: #b8cec6;
+  --color-accent: #c98558;
+  --color-border: #dedfd9;
+  --color-border-strong: #c7cbc4;
+  --color-success: #33815c;
+
+  --font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: 700 clamp(2.8rem, 6vw, 5.3rem)/0.98 var(--font-family);
+  --font-title-xl: 700 clamp(2.5rem, 5vw, 4.25rem)/1.05 var(--font-family);
+  --font-title-lg: 700 clamp(1.75rem, 3vw, 2.4rem)/1.14 var(--font-family);
+  --font-title-md: 700 1.35rem/1.25 var(--font-family);
+  --font-title-sm: 650 1.05rem/1.3 var(--font-family);
+  --font-body-lg: 400 clamp(1.05rem, 2vw, 1.22rem)/1.65 var(--font-family);
+  --font-label: 650 0.82rem/1.3 var(--font-family);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.5rem;
+  --space-10: 3rem;
+  --space-12: 4rem;
+  --space-14: 5rem;
+  --space-16: 6rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 1px 2px rgb(22 38 32 / 5%);
+  --shadow-sm: 0 8px 28px rgb(22 38 32 / 6%);
+  --shadow-md: 0 16px 38px rgb(22 38 32 / 10%);
+  --content-width: 1180px;
+}
+
+html {
+  min-width: 320px;
+  background: var(--color-background);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at 8% 4%, rgb(229 239 235 / 75%), transparent 28rem),
+    var(--color-background);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}

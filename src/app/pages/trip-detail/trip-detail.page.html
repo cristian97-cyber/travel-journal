@@ -1,0 +1,99 @@
+@if (loading()) {
+  <div class="page-status"><mat-spinner diameter="36" /><span>Caricamento itinerario…</span></div>
+} @else if (trip(); as currentTrip) {
+  <nav class="breadcrumb" aria-label="Percorso">
+    <a routerLink="/">I miei viaggi</a><span aria-hidden="true">/</span><span>{{ currentTrip.title }}</span>
+  </nav>
+
+  <header class="trip-header">
+    <div>
+      <p class="eyebrow">{{ currentTrip.destination }}</p>
+      <h1>{{ currentTrip.title }}</h1>
+      <p class="trip-header__meta">
+        {{ currentTrip.startDate | dateRange: currentTrip.endDate }}
+        <span aria-hidden="true">·</span>
+        {{ currentTrip.days.length }} {{ currentTrip.days.length === 1 ? 'giorno' : 'giorni' }}
+      </p>
+      @if (currentTrip.description) {
+        <p class="trip-header__description">{{ currentTrip.description }}</p>
+      }
+    </div>
+    <a mat-stroked-button routerLink="/">Torna alla raccolta</a>
+  </header>
+
+  <div class="trip-layout">
+    <aside class="day-list" aria-label="Giorni del viaggio">
+      <p class="day-list__label">Itinerario</p>
+      @for (day of currentTrip.days; track day.id; let index = $index) {
+        @let calendarDay = shortDay(day.date);
+        <button
+          class="day-button"
+          [class.day-button--active]="selectedDayIndex() === index"
+          [attr.aria-current]="selectedDayIndex() === index ? 'step' : null"
+          (click)="selectDay(index)"
+        >
+          <span class="day-button__date">
+            <small>{{ calendarDay.weekday }}</small>
+            <strong>{{ calendarDay.day }}</strong>
+            <small>{{ calendarDay.month }}</small>
+          </span>
+          <span class="day-button__copy">
+            <strong>Giorno {{ index + 1 }}</strong>
+            <small>{{ day.title }}</small>
+          </span>
+        </button>
+      }
+    </aside>
+
+    @if (selectedDay(); as day) {
+      <main class="day-content">
+        <div class="day-heading">
+          <p class="eyebrow">Giorno {{ selectedDayIndex() + 1 }}</p>
+          <h2>{{ day.title }}</h2>
+          <p class="day-heading__date">{{ formatDay(day.date) }}</p>
+          @if (day.summary) { <p class="day-heading__summary">{{ day.summary }}</p> }
+        </div>
+
+        @if (day.stops.length) {
+          <ol class="timeline">
+            @for (stop of day.stops; track stop.id; let index = $index; let last = $last) {
+              <li class="stop" [class.stop--last]="last">
+                <div class="stop__rail" aria-hidden="true"><span>{{ index + 1 }}</span></div>
+                <article class="stop__card">
+                  <div class="stop__heading">
+                    <div>
+                      @if (stop.time) { <p class="stop__time">{{ stop.time }}</p> }
+                      <h3>{{ stop.title }}</h3>
+                    </div>
+                    @if (stop.duration) { <span class="stop__duration">{{ stop.duration }}</span> }
+                  </div>
+                  @if (stop.location) { <p class="stop__location">{{ stop.location }}</p> }
+                  @if (stop.address && stop.address !== stop.location) { <p class="stop__address">{{ stop.address }}</p> }
+                  @if (stop.description) { <p class="stop__description">{{ stop.description }}</p> }
+                  @if (stop.coordinates) {
+                    <a
+                      class="map-link"
+                      [href]="'https://www.openstreetmap.org/?mlat=' + stop.coordinates.latitude + '&mlon=' + stop.coordinates.longitude + '#map=15/' + stop.coordinates.latitude + '/' + stop.coordinates.longitude"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >Apri sulla mappa <span aria-hidden="true">↗</span></a>
+                  }
+                </article>
+              </li>
+            }
+          </ol>
+        } @else {
+          <div class="empty-day"><strong>Nessuna tappa prevista</strong><span>Questa giornata è ancora tutta da vivere.</span></div>
+        }
+      </main>
+    }
+  </div>
+} @else {
+  <div class="page-status page-status--missing">
+    <span class="missing-mark">?</span>
+    <h1>Viaggio non trovato</h1>
+    <p>Potrebbe essere stato rimosso da questo dispositivo.</p>
+    <a mat-flat-button routerLink="/">Torna ai viaggi</a>
+  </div>
+}
+

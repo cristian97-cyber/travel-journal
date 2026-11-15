@@ -2,10 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import type { Trip } from '../../core/models/trip.model';
 import { TripStore } from '../../core/state/trip.store';
+import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DateRangePipe } from '../../shared/pipes/date-range.pipe';
 
 @Component({
@@ -18,6 +21,7 @@ export class HomePage {
   readonly store = inject(TripStore);
   readonly isDragging = signal(false);
 
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -57,7 +61,23 @@ export class HomePage {
   async removeTrip(event: Event, trip: Trip): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
-    if (!globalThis.confirm(`Eliminare “${trip.title}” da questo dispositivo?`)) return;
+    const confirmed = await firstValueFrom(
+      this.dialog
+        .open(ConfirmDialog, {
+          autoFocus: '.confirm-dialog__cancel',
+          data: {
+            title: 'Eliminare questo itinerario?',
+            message: `“${trip.title}” verrà rimosso da questo dispositivo.`,
+            confirmLabel: 'Elimina itinerario',
+          },
+          maxWidth: 'calc(100vw - 32px)',
+          panelClass: 'app-dialog',
+          width: '440px',
+        })
+        .afterClosed(),
+    );
+    if (!confirmed) return;
+
     await this.store.remove(trip.id);
     this.snackBar.open('Viaggio eliminato', 'Chiudi', { duration: 3000 });
   }

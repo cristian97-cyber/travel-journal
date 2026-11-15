@@ -90,6 +90,12 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
+.app-dialog .mat-mdc-dialog-surface {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;

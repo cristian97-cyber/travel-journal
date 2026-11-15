@@ -1,0 +1,14 @@
+<div class="confirm-dialog__mark" aria-hidden="true">!</div>
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p>{{ data.message }}</p>
+  <p class="confirm-dialog__hint">Questa azione non può essere annullata.</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="confirm-dialog__cancel" mat-button type="button" [mat-dialog-close]="false">
+    Annulla
+  </button>
+  <button mat-flat-button type="button" color="warn" [mat-dialog-close]="true">
+    {{ data.confirmLabel }}
+  </button>
+</mat-dialog-actions>

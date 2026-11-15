@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-top: var(--space-7);
+}
+
+.confirm-dialog__mark {
+  width: 46px;
+  height: 46px;
+  margin: 0 var(--space-6) var(--space-2);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #9c362f;
+  background: #f9e5e2;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+h2[mat-dialog-title] {
+  margin-bottom: var(--space-2);
+  color: var(--color-ink);
+  font: var(--font-title-md);
+}
+
+mat-dialog-content {
+  color: var(--color-text);
+}
+
+mat-dialog-content p {
+  margin: 0;
+}
+
+.confirm-dialog__hint {
+  margin-top: var(--space-2) !important;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+mat-dialog-actions {
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}

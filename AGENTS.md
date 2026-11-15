@@ -1,0 +1,37 @@
+# Repository Guidelines
+
+## Project Structure & Module Organization
+
+Application code lives in `src/app/`. Route-level features are grouped under `pages/` (for example, `pages/home/`), reusable presentation logic belongs in `shared/`, and application infrastructure is under `core/`:
+
+- `core/models/` defines domain types.
+- `core/data/` owns IndexedDB/Dexie persistence and repositories.
+- `core/services/` contains workflows such as ZIP import.
+- `core/state/` manages client-side application state.
+
+Global styles are in `src/styles.scss`; component templates and SCSS stay beside their `.ts` files. Static files copied unchanged belong in `public/`. Unit tests use the `*.spec.ts` suffix and should be colocated with the code they cover. Production output is generated in `dist/` and must not be committed.
+
+## Build, Test, and Development Commands
+
+Install the locked dependency set with `npm install`. Common commands are:
+
+- `npm start` — run the development server at `http://localhost:4200/` with live reload.
+- `npm run build` — create an optimized production build and enforce Angular bundle budgets.
+- `npm run watch` — continuously rebuild using the development configuration.
+- `npm test` — execute unit tests through Angular's Vitest-based test runner.
+
+Run the build and tests before opening a pull request.
+
+## Coding Style & Naming Conventions
+
+Follow `.editorconfig`: two-space indentation, UTF-8, final newlines, and single quotes in TypeScript. Use Prettier-compatible formatting. No lint script is currently configured, so treat TypeScript compiler and Angular build errors as mandatory fixes.
+
+Use kebab-case filenames with role suffixes, such as `trip-detail.page.ts`, `trip.store.ts`, and `date-range.pipe.ts`. Use PascalCase for classes and interfaces, camelCase for variables and functions, and descriptive Angular selectors with the `app-` prefix. Keep components focused; move persistence, imports, and shared state into `core/` rather than page components.
+
+## Testing Guidelines
+
+Write Vitest-compatible Angular tests with `TestBed`, `describe`, and `it`. Name tests after observable behavior (for example, `it('should render the brand')`). Add coverage for new state transitions, repository behavior, import validation, and important rendered UI states. There is no formal coverage threshold; prioritize regression-prone paths and run `npm test` locally.
+
+## Commit & Pull Request Guidelines
+
+Existing commits use short, imperative summaries such as `Replace Angular starter screen with travel journal placeholder`. Keep each commit focused and avoid mixing refactors with behavior changes. Pull requests should explain the user-facing change, summarize implementation and test evidence, link any relevant issue, and include screenshots for visible UI changes. Call out schema, import-format, or persistence changes explicitly because they may affect existing local data.

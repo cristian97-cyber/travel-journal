@@ -1,24 +1,4 @@
-export interface TripStop {
-  id: string;
-  title: string;
-  location: string;
-  address?: string;
-  time?: string;
-  duration?: string;
-  description?: string;
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
-export interface TripDay {
-  id: string;
-  date: string;
-  title: string;
-  summary?: string;
-  stops: TripStop[];
-}
+import { TripDay } from './trip-day.model';
 
 export interface Trip {
   id: string;
@@ -30,4 +10,3 @@ export interface Trip {
   importedAt: string;
   days: TripDay[];
 }
-

@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import Ajv, { type ErrorObject, type JSONSchemaType } from 'ajv';
 import addFormats from 'ajv-formats';
 import { strFromU8, unzipSync } from 'fflate';
-import type { Trip, TripDay, TripStop } from '../models/trip.model';
+import type { Trip } from '../models/trip.model';
+import { TripDay } from '../models/trip-day.model';
+import { TripStop } from '../models/trip-stop.model';
 
 interface TripJsonStop {
   id?: string;
@@ -183,7 +185,8 @@ export class TripImportService {
   }
 
   private normalizeStop(stop: TripJsonStop, index: number): TripStop {
-    const coordinates = stop.coordinates ??
+    const coordinates =
+      stop.coordinates ??
       (stop.latitude !== undefined && stop.longitude !== undefined
         ? { latitude: stop.latitude, longitude: stop.longitude }
         : undefined);
@@ -200,7 +203,8 @@ export class TripImportService {
   }
 
   private createId(prefix: string): string {
-    const id = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const id =
+      globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     return `${prefix}-${id}`;
   }
 
@@ -211,4 +215,3 @@ export class TripImportService {
     return `trip.json non valido: ${location} ${first.message ?? 'non è valido'}.`;
   }
 }
-

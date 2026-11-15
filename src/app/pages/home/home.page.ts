@@ -17,6 +17,7 @@ import { DateRangePipe } from '../../shared/pipes/date-range.pipe';
 export class HomePage {
   readonly store = inject(TripStore);
   readonly isDragging = signal(false);
+
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 

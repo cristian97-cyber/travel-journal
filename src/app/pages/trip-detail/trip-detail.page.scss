@@ -156,6 +156,8 @@
 .timeline {
   margin: 0;
   padding: 0;
+  display: grid;
+  grid-auto-rows: 1fr;
   list-style: none;
 }
 
@@ -197,12 +199,37 @@
 }
 
 .stop__card {
+  box-sizing: border-box;
+  height: calc(100% - var(--space-5));
+  min-height: 150px;
   margin-bottom: var(--space-5);
   padding: var(--space-6);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-xs);
+}
+
+.stop__card--with-image {
+  overflow: hidden;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+}
+
+.stop__image {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.stop__content {
+  min-width: 0;
+}
+
+.stop__card--with-image .stop__content {
+  padding: var(--space-6);
 }
 
 .stop__heading {
@@ -359,6 +386,15 @@
   }
 
   .stop__card {
+    padding: var(--space-5);
+  }
+
+  .stop__card--with-image {
+    padding: 0;
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .stop__card--with-image .stop__content {
     padding: var(--space-5);
   }
 }

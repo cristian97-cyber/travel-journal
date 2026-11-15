@@ -59,34 +59,45 @@
             @for (stop of day.stops; track stop.id; let index = $index; let last = $last) {
               <li class="stop" [class.stop--last]="last">
                 <div class="stop__rail" aria-hidden="true"><span>{{ index + 1 }}</span></div>
-                <article class="stop__card">
-                  <div class="stop__heading">
-                    <div>
-                      @if (stop.time) { <p class="stop__time">{{ stop.time }}</p> }
-                      <h3>{{ stop.title }}</h3>
-                    </div>
-                    @if (stop.duration || stop.toBeBooked) {
-                      <div class="stop__tags">
-                        @if (stop.toBeBooked) {
-                          <span class="stop__booking-tag">Da prenotare</span>
-                        }
-                        @if (stop.duration) {
-                          <span class="stop__duration">{{ stop.duration }}</span>
-                        }
+                <article class="stop__card" [class.stop__card--with-image]="stop.imageUrl">
+                  @if (stop.imageUrl) {
+                    <img
+                      class="stop__image"
+                      [src]="stop.imageUrl"
+                      alt=""
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                    />
+                  }
+                  <div class="stop__content">
+                    <div class="stop__heading">
+                      <div>
+                        @if (stop.time) { <p class="stop__time">{{ stop.time }}</p> }
+                        <h3>{{ stop.title }}</h3>
                       </div>
+                      @if (stop.duration || stop.toBeBooked) {
+                        <div class="stop__tags">
+                          @if (stop.toBeBooked) {
+                            <span class="stop__booking-tag">Da prenotare</span>
+                          }
+                          @if (stop.duration) {
+                            <span class="stop__duration">{{ stop.duration }}</span>
+                          }
+                        </div>
+                      }
+                    </div>
+                    @if (stop.location) { <p class="stop__location">{{ stop.location }}</p> }
+                    @if (stop.address && stop.address !== stop.location) { <p class="stop__address">{{ stop.address }}</p> }
+                    @if (stop.description) { <p class="stop__description">{{ stop.description }}</p> }
+                    @if (stop.coordinates) {
+                      <a
+                        class="map-link"
+                        [href]="'https://www.openstreetmap.org/?mlat=' + stop.coordinates.latitude + '&mlon=' + stop.coordinates.longitude + '#map=15/' + stop.coordinates.latitude + '/' + stop.coordinates.longitude"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >Apri sulla mappa <span aria-hidden="true">↗</span></a>
                     }
                   </div>
-                  @if (stop.location) { <p class="stop__location">{{ stop.location }}</p> }
-                  @if (stop.address && stop.address !== stop.location) { <p class="stop__address">{{ stop.address }}</p> }
-                  @if (stop.description) { <p class="stop__description">{{ stop.description }}</p> }
-                  @if (stop.coordinates) {
-                    <a
-                      class="map-link"
-                      [href]="'https://www.openstreetmap.org/?mlat=' + stop.coordinates.latitude + '&mlon=' + stop.coordinates.longitude + '#map=15/' + stop.coordinates.latitude + '/' + stop.coordinates.longitude"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >Apri sulla mappa <span aria-hidden="true">↗</span></a>
-                  }
                 </article>
               </li>
             }

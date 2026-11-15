@@ -16,6 +16,7 @@ interface TripJsonStop {
   duration?: string;
   description?: string;
   notes?: string;
+  imageUrl?: string;
   toBeBooked?: boolean;
   latitude?: number;
   longitude?: number;
@@ -83,6 +84,7 @@ const tripSchema = {
                 duration: { type: 'string' },
                 description: { type: 'string' },
                 notes: { type: 'string' },
+                imageUrl: { type: 'string', format: 'uri' },
                 toBeBooked: { type: 'boolean' },
                 latitude: { type: 'number', minimum: -90, maximum: 90 },
                 longitude: { type: 'number', minimum: -180, maximum: 180 },
@@ -200,6 +202,7 @@ export class TripImportService {
       time: stop.time?.trim() || undefined,
       duration: stop.duration?.trim() || undefined,
       description: (stop.description ?? stop.notes)?.trim() || undefined,
+      imageUrl: stop.imageUrl?.trim() || undefined,
       toBeBooked: stop.toBeBooked,
       coordinates,
     };

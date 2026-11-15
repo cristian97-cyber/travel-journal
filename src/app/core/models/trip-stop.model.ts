@@ -6,6 +6,7 @@ export interface TripStop {
   time?: string;
   duration?: string;
   description?: string;
+  imageUrl?: string;
   toBeBooked?: boolean;
   coordinates?: {
     latitude: number;

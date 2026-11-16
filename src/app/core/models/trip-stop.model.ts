@@ -5,6 +5,7 @@ export interface TripStop {
   address?: string;
   time?: string;
   duration?: string;
+  transport?: string;
   description?: string;
   imageUrl?: string;
   toBeBooked?: boolean;

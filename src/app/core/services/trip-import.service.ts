@@ -14,6 +14,7 @@ interface TripJsonStop {
   address?: string;
   time?: string;
   duration?: string;
+  transport?: string;
   description?: string;
   notes?: string;
   imageUrl?: string;
@@ -82,6 +83,7 @@ const tripSchema = {
                 address: { type: 'string' },
                 time: { type: 'string' },
                 duration: { type: 'string' },
+                transport: { type: 'string' },
                 description: { type: 'string' },
                 notes: { type: 'string' },
                 imageUrl: { type: 'string', format: 'uri' },
@@ -201,6 +203,7 @@ export class TripImportService {
       address: stop.address?.trim() || undefined,
       time: stop.time?.trim() || undefined,
       duration: stop.duration?.trim() || undefined,
+      transport: stop.transport?.trim() || undefined,
       description: (stop.description ?? stop.notes)?.trim() || undefined,
       imageUrl: stop.imageUrl?.trim() || undefined,
       toBeBooked: stop.toBeBooked,

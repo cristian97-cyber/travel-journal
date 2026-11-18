@@ -221,7 +221,12 @@
       role="tabpanel"
       aria-labelledby="useful-info-tab"
     >
-      <app-trip-useful-info [trip]="currentTrip" (usefulInfoAdded)="addUsefulInfo($event)" />
+      <app-trip-useful-info
+        [trip]="currentTrip"
+        (usefulInfoAdded)="addUsefulInfo($event)"
+        (usefulInfoUpdated)="updateUsefulInfo($event)"
+        (usefulInfoRemoved)="removeUsefulInfo($event)"
+      />
     </main>
   }
 } @else {

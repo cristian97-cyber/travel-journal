@@ -20,8 +20,6 @@ export type TripUsefulInfo =
   | (TripUsefulInfoBase & {
       category: TripUsefulInfoCategoryEnum.App;
       links?: TripAppLink[];
-      /** Link legacy mantenuto per i viaggi già presenti nel database. */
-      link?: { href: string; title: string };
     })
   | (TripUsefulInfoBase & { category: TripUsefulInfoCategoryEnum.Advice });
 

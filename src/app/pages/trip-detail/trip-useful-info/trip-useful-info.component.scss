@@ -233,6 +233,61 @@
   fill: currentColor;
 }
 
+.info-item__content {
+  min-width: 0;
+}
+
+.info-item__title-row {
+  min-width: 0;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.info-item__title-row h4 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.info-item__actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 2px;
+}
+
+.info-item__actions button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-subtle);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.info-item__actions button:hover {
+  color: var(--color-primary-strong);
+  background: var(--color-primary-soft);
+}
+
+.info-item__actions .info-item__delete:hover {
+  color: #9c362f;
+  background: #f9e5e2;
+}
+
+.info-item__actions svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
 .info-item h4,
 .info-tip h4 {
   margin: 0;

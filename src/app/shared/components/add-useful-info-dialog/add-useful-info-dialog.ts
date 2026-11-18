@@ -2,11 +2,16 @@ import { Component, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import type { NewTripUsefulInfo, TripAppLink } from '../../../core/types/useful-info.type';
+import type {
+  NewTripUsefulInfo,
+  TripAppLink,
+  TripUsefulInfo,
+} from '../../../core/types/useful-info.type';
 import { TripUsefulInfoCategoryEnum } from '../../../core/useful-info-category.enum';
 
 export interface AddUsefulInfoDialogData {
   category?: TripUsefulInfoCategoryEnum;
+  item?: TripUsefulInfo;
 }
 
 @Component({
@@ -20,7 +25,8 @@ export class AddUsefulInfoDialog {
 
   readonly data = inject<AddUsefulInfoDialogData>(MAT_DIALOG_DATA);
   readonly category = TripUsefulInfoCategoryEnum;
-  readonly categoryLocked = this.data.category !== undefined;
+  readonly isEditing = this.data.item !== undefined;
+  readonly categoryLocked = this.data.category !== undefined || this.isEditing;
   readonly categories = [
     { value: TripUsefulInfoCategoryEnum.Shopping, label: 'Shopping' },
     { value: TripUsefulInfoCategoryEnum.App, label: 'App' },
@@ -28,18 +34,24 @@ export class AddUsefulInfoDialog {
   ];
   readonly links = new FormArray<ReturnType<AddUsefulInfoDialog['createLinkForm']>>([]);
   readonly form = new FormGroup({
-    category: new FormControl<TripUsefulInfoCategoryEnum | null>(this.data.category ?? null, {
-      validators: [Validators.required],
-    }),
-    name: new FormControl('', {
+    category: new FormControl<TripUsefulInfoCategoryEnum | null>(
+      this.data.item?.category ?? this.data.category ?? null,
+      { validators: [Validators.required] },
+    ),
+    name: new FormControl(this.data.item?.name ?? '', {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/\S/)],
     }),
-    description: new FormControl('', {
+    description: new FormControl(this.data.item?.description ?? '', {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/\S/)],
     }),
-    expiration: new FormControl('', { nonNullable: true }),
+    expiration: new FormControl(
+      this.data.item?.category === TripUsefulInfoCategoryEnum.Shopping
+        ? (this.data.item.expiration ?? '')
+        : '',
+      { nonNullable: true },
+    ),
     links: this.links,
   });
 
@@ -51,6 +63,16 @@ export class AddUsefulInfoDialog {
         this.links.disable({ emitEvent: false });
       }
     });
+
+    if (this.data.item?.category === TripUsefulInfoCategoryEnum.App) {
+      (this.data.item.links ?? []).forEach((link) => this.links.push(this.createLinkForm(link)));
+    }
+
+    if (this.form.controls.category.value === TripUsefulInfoCategoryEnum.App) {
+      this.links.enable({ emitEvent: false });
+    } else {
+      this.links.disable({ emitEvent: false });
+    }
   }
 
   categoryLabel(category: TripUsefulInfoCategoryEnum): string {
@@ -107,13 +129,13 @@ export class AddUsefulInfoDialog {
     this.dialogRef.close(result);
   }
 
-  private createLinkForm() {
+  private createLinkForm(link?: TripAppLink) {
     return new FormGroup({
-      title: new FormControl('', {
+      title: new FormControl(link?.title ?? '', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/\S/)],
       }),
-      href: new FormControl('', {
+      href: new FormControl(link?.href ?? '', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^https?:\/\/\S+$/i)],
       }),

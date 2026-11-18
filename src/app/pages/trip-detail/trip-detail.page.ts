@@ -63,6 +63,38 @@ export class TripDetailPage {
     }
   }
 
+  async updateUsefulInfo(change: { id: string; input: NewTripUsefulInfo }): Promise<void> {
+    const trip = this.trip();
+    if (!trip) return;
+
+    try {
+      this.trip.set(await this.store.updateUsefulInfo(trip.id, change.id, change.input));
+      this.snackBar.open('Dettaglio modificato', 'Chiudi', { duration: 3000 });
+    } catch {
+      this.snackBar.open(
+        this.store.error() ?? 'Non è stato possibile modificare il dettaglio.',
+        'Chiudi',
+        { duration: 5000 },
+      );
+    }
+  }
+
+  async removeUsefulInfo(usefulInfoId: string): Promise<void> {
+    const trip = this.trip();
+    if (!trip) return;
+
+    try {
+      this.trip.set(await this.store.removeUsefulInfo(trip.id, usefulInfoId));
+      this.snackBar.open('Dettaglio eliminato', 'Chiudi', { duration: 3000 });
+    } catch {
+      this.snackBar.open(
+        this.store.error() ?? 'Non è stato possibile eliminare il dettaglio.',
+        'Chiudi',
+        { duration: 5000 },
+      );
+    }
+  }
+
   formatDay(date: string): string {
     return new Intl.DateTimeFormat('it-IT', {
       weekday: 'long',

@@ -8,8 +8,14 @@
       </svg>
     </span>
     <div>
-      <h2 mat-dialog-title>Aggiungi dettaglio</h2>
-      <p>Inserisci una nuova informazione utile per il viaggio.</p>
+      <h2 mat-dialog-title>{{ isEditing ? 'Modifica dettaglio' : 'Aggiungi dettaglio' }}</h2>
+      <p>
+        {{
+          isEditing
+            ? 'Aggiorna le informazioni utili per il viaggio.'
+            : 'Inserisci una nuova informazione utile per il viaggio.'
+        }}
+      </p>
     </div>
   </div>
 
@@ -73,7 +79,13 @@
       @if (selectedCategory === category.Shopping) {
         <div class="form-field">
           <label for="useful-info-expiration">Scadenza <span>(facoltativa)</span></label>
-          <input id="useful-info-expiration" type="date" formControlName="expiration" />
+          <input
+            id="useful-info-expiration"
+            type="text"
+            formControlName="expiration"
+            maxlength="100"
+            placeholder="Es. Prima della partenza"
+          />
         </div>
       }
 
@@ -131,7 +143,7 @@
   <mat-dialog-actions align="end">
     <button mat-button type="button" mat-dialog-close>Annulla</button>
     <button mat-flat-button type="submit" [disabled]="!form.controls.category.value">
-      Aggiungi
+      {{ isEditing ? 'Salva modifiche' : 'Aggiungi' }}
     </button>
   </mat-dialog-actions>
 </form>

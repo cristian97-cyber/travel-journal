@@ -84,6 +84,56 @@ export class TripStore {
     }
   }
 
+  async updateUsefulInfo(
+    tripId: string,
+    usefulInfoId: string,
+    input: NewTripUsefulInfo,
+  ): Promise<Trip> {
+    this.error.set(null);
+    try {
+      const trip = await this.getTripOrThrow(tripId);
+      const current = trip.usefulInfo.find((item) => item.id === usefulInfoId);
+      if (!current) throw new Error('Dettaglio non trovato.');
+      if (current.category !== input.category) {
+        throw new Error('La categoria del dettaglio non può essere modificata.');
+      }
+
+      const item = this.createUpdatedUsefulInfo(current, input);
+      const updatedTrip = {
+        ...trip,
+        usefulInfo: trip.usefulInfo.map((currentItem) =>
+          currentItem.id === usefulInfoId ? item : currentItem,
+        ),
+      };
+      return await this.saveUpdatedTrip(updatedTrip);
+    } catch (error) {
+      this.error.set(
+        error instanceof Error ? error.message : 'Non è stato possibile modificare il dettaglio.',
+      );
+      throw error;
+    }
+  }
+
+  async removeUsefulInfo(tripId: string, usefulInfoId: string): Promise<Trip> {
+    this.error.set(null);
+    try {
+      const trip = await this.getTripOrThrow(tripId);
+      if (!trip.usefulInfo.some((item) => item.id === usefulInfoId)) {
+        throw new Error('Dettaglio non trovato.');
+      }
+
+      return await this.saveUpdatedTrip({
+        ...trip,
+        usefulInfo: trip.usefulInfo.filter((item) => item.id !== usefulInfoId),
+      });
+    } catch (error) {
+      this.error.set(
+        error instanceof Error ? error.message : 'Non è stato possibile eliminare il dettaglio.',
+      );
+      throw error;
+    }
+  }
+
   private createUsefulInfo(input: NewTripUsefulInfo): TripUsefulInfo {
     const common = {
       id: this.createId('useful-info'),
@@ -95,6 +145,43 @@ export class TripStore {
       return { ...common, ...input, done: false };
     }
     return { ...common, ...input };
+  }
+
+  private createUpdatedUsefulInfo(
+    current: TripUsefulInfo,
+    input: NewTripUsefulInfo,
+  ): TripUsefulInfo {
+    if (
+      current.category === TripUsefulInfoCategoryEnum.Shopping &&
+      input.category === TripUsefulInfoCategoryEnum.Shopping
+    ) {
+      return { ...input, id: current.id, done: current.done };
+    }
+    if (input.category === TripUsefulInfoCategoryEnum.App) {
+      return { ...input, id: current.id };
+    }
+    if (input.category === TripUsefulInfoCategoryEnum.Advice) {
+      return { ...input, id: current.id };
+    }
+    throw new Error('Categoria del dettaglio non valida.');
+  }
+
+  private async getTripOrThrow(tripId: string): Promise<Trip> {
+    const trip =
+      this.tripsState().find((item) => item.id === tripId) ?? (await this.repository.get(tripId));
+    if (!trip) throw new Error('Viaggio non trovato.');
+    return trip;
+  }
+
+  private async saveUpdatedTrip(updatedTrip: Trip): Promise<Trip> {
+    await this.repository.save(updatedTrip);
+    this.tripsState.update((trips) => {
+      const tripIsLoaded = trips.some((current) => current.id === updatedTrip.id);
+      return tripIsLoaded
+        ? trips.map((current) => (current.id === updatedTrip.id ? updatedTrip : current))
+        : [updatedTrip, ...trips];
+    });
+    return updatedTrip;
   }
 
   private createId(prefix: string): string {

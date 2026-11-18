@@ -22,7 +22,6 @@ type TripJsonUsefulInfo =
     })
   | (TripJsonUsefulInfoBase & {
       category: TripUsefulInfoCategoryEnum.App;
-      link?: { href: string; title: string };
       links?: TripAppLink[];
     })
   | (TripJsonUsefulInfoBase & { category: TripUsefulInfoCategoryEnum.Advice });
@@ -104,15 +103,6 @@ const tripSchema = {
               category: { const: TripUsefulInfoCategoryEnum.App },
               name: { type: 'string', minLength: 1 },
               description: { type: 'string', minLength: 1 },
-              link: {
-                type: 'object',
-                required: ['href', 'title'],
-                properties: {
-                  href: { type: 'string', format: 'uri' },
-                  title: { type: 'string', minLength: 1 },
-                },
-                additionalProperties: true,
-              },
               links: {
                 type: 'array',
                 items: {
@@ -288,15 +278,7 @@ export class TripImportService {
           info.links?.map((link) => ({
             href: link.href.trim(),
             title: link.title.trim(),
-          })) ??
-          (info.link
-            ? [
-                {
-                  href: info.link.href.trim(),
-                  title: info.link.title.trim(),
-                },
-              ]
-            : []);
+          })) ?? [];
         return {
           ...common,
           category: info.category,

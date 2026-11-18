@@ -5,7 +5,7 @@ import { strFromU8, unzipSync } from 'fflate';
 import type { Trip } from '../models/trip.model';
 import { TripDay } from '../models/trip-day.model';
 import { TripStop } from '../models/trip-stop.model';
-import type { TripUsefulInfo } from '../types/useful-info.type';
+import type { TripAppLink, TripUsefulInfo } from '../types/useful-info.type';
 import { TripUsefulInfoCategoryEnum } from '../useful-info-category.enum';
 
 type TripJsonUsefulInfoBase = {
@@ -23,6 +23,7 @@ type TripJsonUsefulInfo =
   | (TripJsonUsefulInfoBase & {
       category: TripUsefulInfoCategoryEnum.App;
       link?: { href: string; title: string };
+      links?: TripAppLink[];
     })
   | (TripJsonUsefulInfoBase & { category: TripUsefulInfoCategoryEnum.Advice });
 
@@ -111,6 +112,18 @@ const tripSchema = {
                   title: { type: 'string', minLength: 1 },
                 },
                 additionalProperties: true,
+              },
+              links: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['href', 'title'],
+                  properties: {
+                    href: { type: 'string', format: 'uri' },
+                    title: { type: 'string', minLength: 1 },
+                  },
+                  additionalProperties: true,
+                },
               },
             },
             additionalProperties: true,
@@ -271,12 +284,23 @@ export class TripImportService {
           expiration: info.expiration?.trim() || undefined,
         };
       case TripUsefulInfoCategoryEnum.App:
+        const links =
+          info.links?.map((link) => ({
+            href: link.href.trim(),
+            title: link.title.trim(),
+          })) ??
+          (info.link
+            ? [
+                {
+                  href: info.link.href.trim(),
+                  title: info.link.title.trim(),
+                },
+              ]
+            : []);
         return {
           ...common,
           category: info.category,
-          link: info.link
-            ? { href: info.link.href.trim(), title: info.link.title.trim() }
-            : undefined,
+          links: links.length ? links : undefined,
         };
       case TripUsefulInfoCategoryEnum.Advice:
         return { ...common, category: info.category };

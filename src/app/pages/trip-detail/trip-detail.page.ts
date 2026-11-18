@@ -2,7 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import type { Trip } from '../../core/models/trip.model';
+import type { NewTripUsefulInfo } from '../../core/types/useful-info.type';
 import { TripStore } from '../../core/state/trip.store';
 import { DateRangePipe } from '../../shared/pipes/date-range.pipe';
 import { TripUsefulInfoComponent } from './trip-useful-info/trip-useful-info.component';
@@ -24,6 +26,7 @@ type TripDetailSection = 'itinerary' | 'useful-info';
 export class TripDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly store = inject(TripStore);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly trip = signal<Trip | null>(null);
   readonly loading = signal(true);
@@ -42,6 +45,22 @@ export class TripDetailPage {
 
   selectSection(section: TripDetailSection): void {
     this.selectedSection.set(section);
+  }
+
+  async addUsefulInfo(input: NewTripUsefulInfo): Promise<void> {
+    const trip = this.trip();
+    if (!trip) return;
+
+    try {
+      this.trip.set(await this.store.addUsefulInfo(trip.id, input));
+      this.snackBar.open('Dettaglio aggiunto', 'Chiudi', { duration: 3000 });
+    } catch {
+      this.snackBar.open(
+        this.store.error() ?? 'Non è stato possibile aggiungere il dettaglio.',
+        'Chiudi',
+        { duration: 5000 },
+      );
+    }
   }
 
   formatDay(date: string): string {

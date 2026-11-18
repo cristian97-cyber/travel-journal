@@ -1,0 +1,137 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="add-dialog__heading">
+    <span class="add-dialog__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M11 5a1 1 0 0 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5Z"
+        />
+      </svg>
+    </span>
+    <div>
+      <h2 mat-dialog-title>Aggiungi dettaglio</h2>
+      <p>Inserisci una nuova informazione utile per il viaggio.</p>
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <div class="form-field">
+      @if (categoryLocked) {
+        <span class="form-field__label">Categoria</span>
+        <div class="category-value">
+          {{ categoryLabel(form.controls.category.value!) }}
+        </div>
+      } @else {
+        <label for="useful-info-category">Categoria</label>
+        <select id="useful-info-category" formControlName="category">
+          <option [ngValue]="null" disabled>Seleziona una categoria</option>
+          @for (option of categories; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        @if (form.controls.category.touched && form.controls.category.hasError('required')) {
+          <small class="form-field__error">Seleziona una categoria.</small>
+        }
+      }
+    </div>
+
+    @if (form.controls.category.value; as selectedCategory) {
+      <div class="form-field">
+        <label for="useful-info-name">Titolo</label>
+        <input
+          id="useful-info-name"
+          type="text"
+          formControlName="name"
+          autocomplete="off"
+          maxlength="100"
+          [placeholder]="
+            selectedCategory === category.Shopping
+              ? 'Es. Adattatore universale'
+              : selectedCategory === category.App
+                ? 'Es. Citymapper'
+                : 'Es. Porta sempre con te dei contanti'
+          "
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <small class="form-field__error">Inserisci un titolo.</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="useful-info-description">Descrizione</label>
+        <textarea
+          id="useful-info-description"
+          formControlName="description"
+          rows="3"
+          maxlength="400"
+          placeholder="Aggiungi una breve descrizione"
+        ></textarea>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <small class="form-field__error">Inserisci una descrizione.</small>
+        }
+      </div>
+
+      @if (selectedCategory === category.Shopping) {
+        <div class="form-field">
+          <label for="useful-info-expiration">Scadenza <span>(facoltativa)</span></label>
+          <input id="useful-info-expiration" type="date" formControlName="expiration" />
+        </div>
+      }
+
+      @if (selectedCategory === category.App) {
+        <fieldset>
+          <legend>Link <span>(facoltativi)</span></legend>
+          <p>Aggiungi i link utili per scaricare o consultare l’app.</p>
+
+          <div class="app-links" formArrayName="links">
+            @for (linkForm of links.controls; track linkForm; let index = $index) {
+              <div class="app-link" [formGroupName]="index">
+                <div class="app-link__heading">
+                  <strong>Link {{ index + 1 }}</strong>
+                  <button type="button" (click)="removeLink(index)">Rimuovi</button>
+                </div>
+                <div class="form-field">
+                  <label [for]="'useful-info-link-title-' + index">Testo del link</label>
+                  <input
+                    [id]="'useful-info-link-title-' + index"
+                    type="text"
+                    formControlName="title"
+                    placeholder="Es. Scarica dall’App Store"
+                  />
+                  @if (linkForm.controls.title.touched && linkForm.controls.title.invalid) {
+                    <small class="form-field__error">Inserisci il testo del link.</small>
+                  }
+                </div>
+                <div class="form-field">
+                  <label [for]="'useful-info-link-href-' + index">Indirizzo</label>
+                  <input
+                    [id]="'useful-info-link-href-' + index"
+                    type="url"
+                    formControlName="href"
+                    inputmode="url"
+                    placeholder="https://example.com"
+                  />
+                  @if (linkForm.controls.href.touched && linkForm.controls.href.invalid) {
+                    <small class="form-field__error"
+                      >Inserisci un indirizzo completo che inizi con http:// o https://.</small
+                    >
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <button class="app-links__add" mat-stroked-button type="button" (click)="addLink()">
+            Aggiungi link
+          </button>
+        </fieldset>
+      }
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Annulla</button>
+    <button mat-flat-button type="submit" [disabled]="!form.controls.category.value">
+      Aggiungi
+    </button>
+  </mat-dialog-actions>
+</form>

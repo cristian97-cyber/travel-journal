@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import type { Trip } from '../models/trip.model';
+import type { NewTripUsefulInfo, TripUsefulInfo } from '../types/useful-info.type';
+import { TripUsefulInfoCategoryEnum } from '../useful-info-category.enum';
 import { TripRepository } from '../data/trip-repository.service';
 import { TripImportService } from '../services/trip-import.service';
 
@@ -56,5 +58,48 @@ export class TripStore {
     await this.repository.delete(id);
     this.tripsState.update((trips) => trips.filter((trip) => trip.id !== id));
   }
-}
 
+  async addUsefulInfo(tripId: string, input: NewTripUsefulInfo): Promise<Trip> {
+    this.error.set(null);
+    try {
+      const trip =
+        this.tripsState().find((item) => item.id === tripId) ?? (await this.repository.get(tripId));
+      if (!trip) throw new Error('Viaggio non trovato.');
+
+      const item = this.createUsefulInfo(input);
+      const updatedTrip = { ...trip, usefulInfo: [...trip.usefulInfo, item] };
+      await this.repository.save(updatedTrip);
+      this.tripsState.update((trips) => {
+        const tripIsLoaded = trips.some((current) => current.id === tripId);
+        return tripIsLoaded
+          ? trips.map((current) => (current.id === tripId ? updatedTrip : current))
+          : [updatedTrip, ...trips];
+      });
+      return updatedTrip;
+    } catch (error) {
+      this.error.set(
+        error instanceof Error ? error.message : 'Non è stato possibile aggiungere il dettaglio.',
+      );
+      throw error;
+    }
+  }
+
+  private createUsefulInfo(input: NewTripUsefulInfo): TripUsefulInfo {
+    const common = {
+      id: this.createId('useful-info'),
+      name: input.name,
+      description: input.description,
+    };
+
+    if (input.category === TripUsefulInfoCategoryEnum.Shopping) {
+      return { ...common, ...input, done: false };
+    }
+    return { ...common, ...input };
+  }
+
+  private createId(prefix: string): string {
+    const suffix =
+      globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return `${prefix}-${suffix}`;
+  }
+}

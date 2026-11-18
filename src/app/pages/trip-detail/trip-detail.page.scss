@@ -22,8 +22,7 @@
   justify-content: space-between;
   align-items: start;
   gap: var(--space-8);
-  padding: var(--space-8) 0 var(--space-9);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-8) 0 var(--space-6);
 }
 
 .eyebrow,
@@ -54,6 +53,61 @@
   margin: var(--space-5) 0 0;
   color: var(--color-text-muted);
   line-height: 1.7;
+}
+
+.trip-sections {
+  display: flex;
+  gap: var(--space-7);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.trip-section-tab {
+  position: relative;
+  flex: 0 0 auto;
+  padding: var(--space-4) 0;
+  border: 0;
+  color: var(--color-text-muted);
+  background: transparent;
+  font: var(--font-label);
+}
+
+.trip-section-tab::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: var(--radius-pill) var(--radius-pill) 0 0;
+  background: transparent;
+}
+
+.trip-section-tab span {
+  min-width: 22px;
+  height: 22px;
+  margin-left: var(--space-1);
+  padding: 0 7px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  font-size: 0.7rem;
+}
+
+.trip-section-tab--active {
+  color: var(--color-primary-strong);
+}
+
+.trip-section-tab--active::after {
+  background: var(--color-primary);
+}
+
+.trip-section-tab--active span {
+  color: var(--color-primary-strong);
+  background: var(--color-primary-soft);
 }
 
 .trip-layout {
@@ -430,5 +484,9 @@
 
   .stop__card--with-image .stop__content {
     padding: var(--space-4);
+  }
+
+  .trip-sections {
+    gap: var(--space-6);
   }
 }

@@ -5,6 +5,26 @@ import { strFromU8, unzipSync } from 'fflate';
 import type { Trip } from '../models/trip.model';
 import { TripDay } from '../models/trip-day.model';
 import { TripStop } from '../models/trip-stop.model';
+import type { TripUsefulInfo } from '../types/useful-info.type';
+import { TripUsefulInfoCategoryEnum } from '../useful-info-category.enum';
+
+type TripJsonUsefulInfoBase = {
+  id?: string;
+  name: string;
+  description: string;
+};
+
+type TripJsonUsefulInfo =
+  | (TripJsonUsefulInfoBase & {
+      category: TripUsefulInfoCategoryEnum.Shopping;
+      done?: boolean;
+      expiration?: string;
+    })
+  | (TripJsonUsefulInfoBase & {
+      category: TripUsefulInfoCategoryEnum.App;
+      link?: { href: string; title: string };
+    })
+  | (TripJsonUsefulInfoBase & { category: TripUsefulInfoCategoryEnum.Advice });
 
 interface TripJsonStop {
   id?: string;
@@ -43,6 +63,7 @@ interface TripJson {
   startDate?: string;
   endDate?: string;
   days: TripJsonDay[];
+  usefulInfo?: TripJsonUsefulInfo[];
 }
 
 const tripSchema = {
@@ -57,6 +78,57 @@ const tripSchema = {
     description: { type: 'string' },
     startDate: { type: 'string', format: 'date' },
     endDate: { type: 'string', format: 'date' },
+    usefulInfo: {
+      type: 'array',
+      items: {
+        oneOf: [
+          {
+            type: 'object',
+            required: ['category', 'name', 'description'],
+            properties: {
+              id: { type: 'string', minLength: 1 },
+              category: { const: TripUsefulInfoCategoryEnum.Shopping },
+              name: { type: 'string', minLength: 1 },
+              description: { type: 'string', minLength: 1 },
+              done: { type: 'boolean' },
+              expiration: { type: 'string', minLength: 1 },
+            },
+            additionalProperties: true,
+          },
+          {
+            type: 'object',
+            required: ['category', 'name', 'description'],
+            properties: {
+              id: { type: 'string', minLength: 1 },
+              category: { const: TripUsefulInfoCategoryEnum.App },
+              name: { type: 'string', minLength: 1 },
+              description: { type: 'string', minLength: 1 },
+              link: {
+                type: 'object',
+                required: ['href', 'title'],
+                properties: {
+                  href: { type: 'string', format: 'uri' },
+                  title: { type: 'string', minLength: 1 },
+                },
+                additionalProperties: true,
+              },
+            },
+            additionalProperties: true,
+          },
+          {
+            type: 'object',
+            required: ['category', 'name', 'description'],
+            properties: {
+              id: { type: 'string', minLength: 1 },
+              category: { const: TripUsefulInfoCategoryEnum.Advice },
+              name: { type: 'string', minLength: 1 },
+              description: { type: 'string', minLength: 1 },
+            },
+            additionalProperties: true,
+          },
+        ],
+      },
+    },
     days: {
       type: 'array',
       minItems: 1,
@@ -177,7 +249,38 @@ export class TripImportService {
       endDate,
       importedAt: new Date().toISOString(),
       days,
+      usefulInfo: (input.usefulInfo ?? []).map((info, index) =>
+        this.normalizeUsefulInfo(info, index),
+      ),
     };
+  }
+
+  private normalizeUsefulInfo(info: TripJsonUsefulInfo, index: number): TripUsefulInfo {
+    const common = {
+      id: info.id?.trim() || this.createId(`useful-info-${index + 1}`),
+      name: info.name.trim(),
+      description: info.description.trim(),
+    };
+
+    switch (info.category) {
+      case TripUsefulInfoCategoryEnum.Shopping:
+        return {
+          ...common,
+          category: info.category,
+          done: info.done ?? false,
+          expiration: info.expiration?.trim() || undefined,
+        };
+      case TripUsefulInfoCategoryEnum.App:
+        return {
+          ...common,
+          category: info.category,
+          link: info.link
+            ? { href: info.link.href.trim(), title: info.link.title.trim() }
+            : undefined,
+        };
+      case TripUsefulInfoCategoryEnum.Advice:
+        return { ...common, category: info.category };
+    }
   }
 
   private normalizeDay(day: TripJsonDay, index: number): TripDay {

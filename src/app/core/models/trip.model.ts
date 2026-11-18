@@ -1,4 +1,5 @@
 import { TripDay } from './trip-day.model';
+import { TripUsefulInfo } from '../types/useful-info.type';
 
 export interface Trip {
   id: string;
@@ -9,4 +10,5 @@ export interface Trip {
   endDate: string;
   importedAt: string;
   days: TripDay[];
+  usefulInfo: TripUsefulInfo[];
 }

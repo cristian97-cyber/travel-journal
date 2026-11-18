@@ -2,7 +2,8 @@
   <div class="page-status"><mat-spinner diameter="36" /><span>Caricamento itinerario…</span></div>
 } @else if (trip(); as currentTrip) {
   <nav class="breadcrumb" aria-label="Percorso">
-    <a routerLink="/">I miei viaggi</a><span aria-hidden="true">/</span><span>{{ currentTrip.title }}</span>
+    <a routerLink="/">I miei viaggi</a><span aria-hidden="true">/</span
+    ><span>{{ currentTrip.title }}</span>
   </nav>
 
   <header class="trip-header">
@@ -21,141 +22,208 @@
     <a mat-stroked-button routerLink="/">Torna alla raccolta</a>
   </header>
 
-  <div class="trip-layout">
-    <aside class="day-list" aria-label="Giorni del viaggio">
-      <p class="day-list__label">Itinerario</p>
-      @for (day of currentTrip.days; track day.id; let index = $index) {
-        @let calendarDay = shortDay(day.date);
-        <button
-          class="day-button"
-          [class.day-button--active]="selectedDayIndex() === index"
-          [attr.aria-current]="selectedDayIndex() === index ? 'step' : null"
-          (click)="selectDay(index)"
-        >
-          <span class="day-button__date">
-            <small>{{ calendarDay.weekday }}</small>
-            <strong>{{ calendarDay.day }}</strong>
-            <small>{{ calendarDay.month }}</small>
-          </span>
-          <span class="day-button__copy">
-            <strong>Giorno {{ index + 1 }}</strong>
-            <small>{{ day.title }}</small>
-          </span>
-        </button>
-      }
-    </aside>
+  <nav class="trip-sections" aria-label="Contenuti del viaggio" role="tablist">
+    <button
+      class="trip-section-tab"
+      type="button"
+      role="tab"
+      id="itinerary-tab"
+      aria-controls="itinerary-panel"
+      [attr.aria-selected]="selectedSection() === 'itinerary'"
+      [class.trip-section-tab--active]="selectedSection() === 'itinerary'"
+      (click)="selectSection('itinerary')"
+    >
+      Itinerario
+    </button>
+    <button
+      class="trip-section-tab"
+      type="button"
+      role="tab"
+      id="useful-info-tab"
+      aria-controls="useful-info-panel"
+      [attr.aria-selected]="selectedSection() === 'useful-info'"
+      [class.trip-section-tab--active]="selectedSection() === 'useful-info'"
+      (click)="selectSection('useful-info')"
+    >
+      Info utili <span>{{ currentTrip.usefulInfo.length }}</span>
+    </button>
+  </nav>
 
-    @if (selectedDay(); as day) {
-      <main class="day-content">
-        <div class="day-heading">
-          <p class="eyebrow">Giorno {{ selectedDayIndex() + 1 }}</p>
-          <h2>{{ day.title }}</h2>
-          <p class="day-heading__date">{{ formatDay(day.date) }}</p>
-          @if (day.summary) { <p class="day-heading__summary">{{ day.summary }}</p> }
-        </div>
+  @if (selectedSection() === 'itinerary') {
+    <div class="trip-layout" id="itinerary-panel" role="tabpanel" aria-labelledby="itinerary-tab">
+      <aside class="day-list" aria-label="Giorni del viaggio">
+        <p class="day-list__label">Itinerario</p>
+        @for (day of currentTrip.days; track day.id; let index = $index) {
+          @let calendarDay = shortDay(day.date);
+          <button
+            class="day-button"
+            [class.day-button--active]="selectedDayIndex() === index"
+            [attr.aria-current]="selectedDayIndex() === index ? 'step' : null"
+            (click)="selectDay(index)"
+          >
+            <span class="day-button__date">
+              <small>{{ calendarDay.weekday }}</small>
+              <strong>{{ calendarDay.day }}</strong>
+              <small>{{ calendarDay.month }}</small>
+            </span>
+            <span class="day-button__copy">
+              <strong>Giorno {{ index + 1 }}</strong>
+              <small>{{ day.title }}</small>
+            </span>
+          </button>
+        }
+      </aside>
 
-        @if (day.stops.length) {
-          <ol class="timeline">
-            @for (stop of day.stops; track stop.id; let index = $index; let last = $last) {
-              <li class="stop" [class.stop--last]="last">
-                <div class="stop__rail" aria-hidden="true"><span>{{ index + 1 }}</span></div>
-                <article class="stop__card" [class.stop__card--with-image]="stop.imageUrl">
-                  @if (stop.imageUrl) {
-                    <div class="stop__media">
-                      <img
-                        class="stop__image"
-                        [src]="stop.imageUrl"
-                        alt=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer"
-                      />
-                    </div>
-                  }
-                  <div class="stop__content">
-                    <div class="stop__heading">
-                      @if (stop.time) { <p class="stop__time">{{ stop.time }}</p> }
-                      <h3>{{ stop.title }}</h3>
-                    </div>
-                    @if (stop.location || stop.address) {
-                      <p class="stop__location">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
-                        </svg>
-                        <span>
-                          {{ stop.location }}
-                          @if (stop.address && stop.address !== stop.location) {
-                            <span class="stop__separator" aria-hidden="true">·</span>
-                            {{ stop.address }}
-                          }
-                        </span>
-                      </p>
-                    }
-                    @if (stop.toBeBooked || stop.duration || stop.transport) {
-                      <div class="stop__tags">
-                        @if (stop.toBeBooked) {
-                          <span class="stop__booking-tag">
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              aria-hidden="true"
-                            >
-                              <path d="M4 4h16a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1 2 2 0 0 0 0 4 1 1 0 0 1 1 1v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a1 1 0 0 1 1-1 2 2 0 0 0 0-4 1 1 0 0 1-1-1V6a2 2 0 0 1 2-2Zm7 3v2h2V7h-2Zm0 4v2h2v-2h-2Zm0 4v2h2v-2h-2Z" />
-                            </svg>
-                            Da prenotare
-                          </span>
-                        }
-                        @if (stop.duration) {
-                          <span class="stop__duration">
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              aria-hidden="true"
-                            >
-                              <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3a1 1 0 0 1 1 1v3.6l2.7 1.6a1 1 0 1 1-1 1.7l-3.2-1.9a1 1 0 0 1-.5-.9V8a1 1 0 0 1 1-1Z" />
-                            </svg>
-                            {{ stop.duration }}
-                          </span>
-                        }
-                        @if (stop.transport) {
-                          <span class="stop__transport-tag">
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              aria-hidden="true"
-                            >
-                              <path d="M6 2h12a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2v2a1 1 0 0 1-2 0v-2H7v2a1 1 0 0 1-2 0v-2a2 2 0 0 1-2-2V5a3 3 0 0 1 3-3Zm0 3v6h12V5H6Zm1 8.5A1.5 1.5 0 1 0 7 16a1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />
-                            </svg>
-                            {{ stop.transport }}
-                          </span>
-                        }
+      @if (selectedDay(); as day) {
+        <main class="day-content">
+          <div class="day-heading">
+            <p class="eyebrow">Giorno {{ selectedDayIndex() + 1 }}</p>
+            <h2>{{ day.title }}</h2>
+            <p class="day-heading__date">{{ formatDay(day.date) }}</p>
+            @if (day.summary) {
+              <p class="day-heading__summary">{{ day.summary }}</p>
+            }
+          </div>
+
+          @if (day.stops.length) {
+            <ol class="timeline">
+              @for (stop of day.stops; track stop.id; let index = $index; let last = $last) {
+                <li class="stop" [class.stop--last]="last">
+                  <div class="stop__rail" aria-hidden="true">
+                    <span>{{ index + 1 }}</span>
+                  </div>
+                  <article class="stop__card" [class.stop__card--with-image]="stop.imageUrl">
+                    @if (stop.imageUrl) {
+                      <div class="stop__media">
+                        <img
+                          class="stop__image"
+                          [src]="stop.imageUrl"
+                          alt=""
+                          loading="lazy"
+                          referrerpolicy="no-referrer"
+                        />
                       </div>
                     }
-                    @if (stop.description) { <p class="stop__description">{{ stop.description }}</p> }
-                    @if (stop.coordinates) {
-                      <a
-                        class="map-link"
-                        [href]="'https://www.openstreetmap.org/?mlat=' + stop.coordinates.latitude + '&mlon=' + stop.coordinates.longitude + '#map=15/' + stop.coordinates.latitude + '/' + stop.coordinates.longitude"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >Apri sulla mappa <span aria-hidden="true">↗</span></a>
-                    }
-                  </div>
-                </article>
-              </li>
-            }
-          </ol>
-        } @else {
-          <div class="empty-day"><strong>Nessuna tappa prevista</strong><span>Questa giornata è ancora tutta da vivere.</span></div>
-        }
-      </main>
-    }
-  </div>
+                    <div class="stop__content">
+                      <div class="stop__heading">
+                        @if (stop.time) {
+                          <p class="stop__time">{{ stop.time }}</p>
+                        }
+                        <h3>{{ stop.title }}</h3>
+                      </div>
+                      @if (stop.location || stop.address) {
+                        <p class="stop__location">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"
+                            />
+                          </svg>
+                          <span>
+                            {{ stop.location }}
+                            @if (stop.address && stop.address !== stop.location) {
+                              <span class="stop__separator" aria-hidden="true">·</span>
+                              {{ stop.address }}
+                            }
+                          </span>
+                        </p>
+                      }
+                      @if (stop.toBeBooked || stop.duration || stop.transport) {
+                        <div class="stop__tags">
+                          @if (stop.toBeBooked) {
+                            <span class="stop__booking-tag">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M4 4h16a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1 2 2 0 0 0 0 4 1 1 0 0 1 1 1v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a1 1 0 0 1 1-1 2 2 0 0 0 0-4 1 1 0 0 1-1-1V6a2 2 0 0 1 2-2Zm7 3v2h2V7h-2Zm0 4v2h2v-2h-2Zm0 4v2h2v-2h-2Z"
+                                />
+                              </svg>
+                              Da prenotare
+                            </span>
+                          }
+                          @if (stop.duration) {
+                            <span class="stop__duration">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3a1 1 0 0 1 1 1v3.6l2.7 1.6a1 1 0 1 1-1 1.7l-3.2-1.9a1 1 0 0 1-.5-.9V8a1 1 0 0 1 1-1Z"
+                                />
+                              </svg>
+                              {{ stop.duration }}
+                            </span>
+                          }
+                          @if (stop.transport) {
+                            <span class="stop__transport-tag">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M6 2h12a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2v2a1 1 0 0 1-2 0v-2H7v2a1 1 0 0 1-2 0v-2a2 2 0 0 1-2-2V5a3 3 0 0 1 3-3Zm0 3v6h12V5H6Zm1 8.5A1.5 1.5 0 1 0 7 16a1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+                                />
+                              </svg>
+                              {{ stop.transport }}
+                            </span>
+                          }
+                        </div>
+                      }
+                      @if (stop.description) {
+                        <p class="stop__description">{{ stop.description }}</p>
+                      }
+                      @if (stop.coordinates) {
+                        <a
+                          class="map-link"
+                          [href]="
+                            'https://www.openstreetmap.org/?mlat=' +
+                            stop.coordinates.latitude +
+                            '&mlon=' +
+                            stop.coordinates.longitude +
+                            '#map=15/' +
+                            stop.coordinates.latitude +
+                            '/' +
+                            stop.coordinates.longitude
+                          "
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          >Apri sulla mappa <span aria-hidden="true">↗</span></a
+                        >
+                      }
+                    </div>
+                  </article>
+                </li>
+              }
+            </ol>
+          } @else {
+            <div class="empty-day">
+              <strong>Nessuna tappa prevista</strong
+              ><span>Questa giornata è ancora tutta da vivere.</span>
+            </div>
+          }
+        </main>
+      }
+    </div>
+  } @else {
+    <main
+      class="useful-info"
+      id="useful-info-panel"
+      role="tabpanel"
+      aria-labelledby="useful-info-tab"
+    >
+      <app-trip-useful-info [trip]="currentTrip" />
+    </main>
+  }
 } @else {
   <div class="page-status page-status--missing">
     <span class="missing-mark">?</span>

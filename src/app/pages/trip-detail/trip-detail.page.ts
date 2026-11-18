@@ -5,10 +5,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import type { Trip } from '../../core/models/trip.model';
 import { TripStore } from '../../core/state/trip.store';
 import { DateRangePipe } from '../../shared/pipes/date-range.pipe';
+import { TripUsefulInfoComponent } from './trip-useful-info/trip-useful-info.component';
+
+type TripDetailSection = 'itinerary' | 'useful-info';
 
 @Component({
   selector: 'app-trip-detail-page',
-  imports: [RouterLink, MatButtonModule, MatProgressSpinnerModule, DateRangePipe],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    DateRangePipe,
+    TripUsefulInfoComponent,
+  ],
   templateUrl: './trip-detail.page.html',
   styleUrl: './trip-detail.page.scss',
 })
@@ -19,6 +28,7 @@ export class TripDetailPage {
   readonly trip = signal<Trip | null>(null);
   readonly loading = signal(true);
   readonly selectedDayIndex = signal(0);
+  readonly selectedSection = signal<TripDetailSection>('itinerary');
   readonly selectedDay = computed(() => this.trip()?.days[this.selectedDayIndex()] ?? null);
 
   constructor() {
@@ -28,6 +38,10 @@ export class TripDetailPage {
   selectDay(index: number): void {
     this.selectedDayIndex.set(index);
     globalThis.scrollTo?.({ top: 0, behavior: 'smooth' });
+  }
+
+  selectSection(section: TripDetailSection): void {
+    this.selectedSection.set(section);
   }
 
   formatDay(date: string): string {
